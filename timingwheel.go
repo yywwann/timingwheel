@@ -166,7 +166,7 @@ func (tw *TimingWheel) Stop() {
 
 // AfterFunc waits for the duration to elapse and then calls f in its own goroutine.
 // It returns a Timer that can be used to cancel the call using its Stop method.
-func (tw *TimingWheel) AfterFunc(d time.Duration, f func()) *Timer {
+func (tw *TimingWheel) AfterFunc(d time.Duration, f func()) TimerTask {
 	t := &Timer{
 		expiration: timeToMs(time.Now().UTC().Add(d)),
 		task:       f,
@@ -199,11 +199,15 @@ type Scheduler interface {
 // Afterwards, it will ask the next execution time each time f is about to
 // be executed, and f will be called at the next execution time if the time
 // is non-zero.
-func (tw *TimingWheel) ScheduleFunc(s Scheduler, f func()) (t *Timer) {
+func (tw *TimingWheel) ScheduleFunc(s Scheduler, f func()) TimerTask {
+	var (
+		t = new(Timer)
+	)
+
 	expiration := s.Next(time.Now().UTC())
 	if expiration.IsZero() {
 		// No time is scheduled, return nil.
-		return
+		return t
 	}
 
 	t = &Timer{
@@ -222,5 +226,5 @@ func (tw *TimingWheel) ScheduleFunc(s Scheduler, f func()) (t *Timer) {
 	}
 	tw.addOrRun(t)
 
-	return
+	return t
 }

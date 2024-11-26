@@ -26,7 +26,7 @@ func BenchmarkTimingWheel_StartStop(b *testing.B) {
 	}
 	for _, c := range cases {
 		b.Run(c.name, func(b *testing.B) {
-			base := make([]*timingwheel.Timer, c.N)
+			base := make([]timingwheel.TimerTask, c.N)
 			for i := 0; i < len(base); i++ {
 				base[i] = tw.AfterFunc(genD(i), func() {})
 			}

@@ -7,6 +7,10 @@ import (
 	"unsafe"
 )
 
+type TimerTask interface {
+	Stop() bool
+}
+
 // Timer represents a single event. When the Timer expires, the given
 // task will be executed.
 type Timer struct {
